@@ -4,6 +4,8 @@ export default async function handler(req, res) {
       headers: {'Bmx-Api-Key': 'de4b0afeef5eaea41dc0a0e86e8dc8d3'}
     });
     
+    if (!response.ok) throw new Error('Banxico error');
+    
     const data = await response.json();
     const indicadores = data.Indicadores.map(ind => ({
       nombre: ind.Titulo,
