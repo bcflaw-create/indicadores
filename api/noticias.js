@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   try {
-    // Llamar a tu PHP que obtiene noticias del DOF
+    // Llamar a tu PHP que obtiene noticias del RSS del DOF
     const response = await fetch('https://bcflaw.mx/noticias.php');
     
     if (!response.ok) {
@@ -24,22 +24,22 @@ export default async function handler(req, res) {
     return res.json({
       noticias: [
         {
+          titulo: 'Últimas Disposiciones del DOF',
+          descripcion: 'Consulta el Diario Oficial de la Federación para información actualizada',
+          fecha: new Date().toISOString(),
+          fuente: 'DOF',
+          url: 'https://www.dof.gob.mx'
+        },
+        {
           titulo: 'Reforma Fiscal 2026',
-          descripcion: 'Nuevas disposiciones fiscales del Diario Oficial',
+          descripcion: 'Nuevas disposiciones en materia fiscal',
           fecha: new Date().toISOString(),
           fuente: 'DOF',
           url: 'https://www.dof.gob.mx'
         },
         {
-          titulo: 'Cumplimiento Normativo',
-          descripcion: 'Requisitos de compliance actualizados',
-          fecha: new Date().toISOString(),
-          fuente: 'DOF',
-          url: 'https://www.dof.gob.mx'
-        },
-        {
-          titulo: 'Regulación Laboral',
-          descripcion: 'Disposiciones en materia laboral',
+          titulo: 'Normativa Laboral',
+          descripcion: 'Disposiciones en materia de trabajo',
           fecha: new Date().toISOString(),
           fuente: 'DOF',
           url: 'https://www.dof.gob.mx'
