@@ -4,8 +4,7 @@ export default async function handler(req, res) {
     
     // Llamar a la API correcta de Banxico con el token
     const response = await fetch(
-      `https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CF373&sector=6&locale=es&token=${token}`,
-      {
+    `https://api.allorigins.win/raw?url=${encodeURIComponent('https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CF373&sector=6&locale=es&token=' + token)}`,      {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
