@@ -1,8 +1,0 @@
-{
-  "name": "api-indicadores-banxico",
-  "version": "1.0.0",
-  "description": "API para obtener indicadores de Banxico",
-  "scripts": {
-    "dev": "vercel dev"
-  }
-}
