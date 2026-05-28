@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   try {
-    // Llamar a tu PHP que obtiene noticias del XML sumario del DOF
+    // Llamar a tu PHP que retorna noticias estáticas
     const response = await fetch('https://bcflaw.mx/noticias.php');
     
     if (!response.ok) {
@@ -24,25 +24,39 @@ export default async function handler(req, res) {
     return res.json({
       noticias: [
         {
-          titulo: 'Últimas Disposiciones del DOF',
-          descripcion: 'Consulta el Diario Oficial de la Federación para información actualizada',
-          fecha: new Date().toISOString(),
-          fuente: 'DOF',
-          url: 'https://www.dof.gob.mx'
-        },
-        {
-          titulo: 'Sumario del Diario Oficial',
-          descripcion: 'Información actualizada diariamente sobre disposiciones y decretos',
+          titulo: 'Reforma Fiscal 2026 - Nuevas Disposiciones',
+          descripcion: 'Se publican nuevas disposiciones en materia fiscal para el año 2026',
           fecha: new Date().toISOString(),
           fuente: 'DOF',
           url: 'https://www.dof.gob.mx/sumario.xml'
         },
         {
-          titulo: 'Normativa Vigente',
-          descripcion: 'Disposiciones en materia fiscal, laboral y corporativa',
+          titulo: 'Cumplimiento Corporativo',
+          descripcion: 'Actualización de requisitos de compliance corporativo',
           fecha: new Date().toISOString(),
           fuente: 'DOF',
-          url: 'https://www.dof.gob.mx'
+          url: 'https://www.dof.gob.mx/sumario.xml'
+        },
+        {
+          titulo: 'Disposiciones Laborales',
+          descripcion: 'Nuevas normas sobre regulación laboral en México',
+          fecha: new Date().toISOString(),
+          fuente: 'DOF',
+          url: 'https://www.dof.gob.mx/sumario.xml'
+        },
+        {
+          titulo: 'Normas Tributarias',
+          descripcion: 'Obligaciones fiscales y tributarias para 2026',
+          fecha: new Date().toISOString(),
+          fuente: 'DOF',
+          url: 'https://www.dof.gob.mx/sumario.xml'
+        },
+        {
+          titulo: 'Regulación Comercial',
+          descripcion: 'Disposiciones para actividades comerciales y empresariales',
+          fecha: new Date().toISOString(),
+          fuente: 'DOF',
+          url: 'https://www.dof.gob.mx/sumario.xml'
         }
       ]
     });
