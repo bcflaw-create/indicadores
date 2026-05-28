@@ -57,6 +57,7 @@ export default async function handler(req, res) {
     
     .noticia-titulo {
       color: #16a085;
+      background: white;
       font-size: 13px;
       font-weight: 600;
       margin-bottom: 8px;
@@ -68,13 +69,15 @@ export default async function handler(req, res) {
     }
     
     .noticia-fuente {
-      color: #888;
+      color: #333;
+      background: white;
       font-size: 11px;
       margin-bottom: 4px;
     }
     
     .noticia-fecha {
-      color: #999;
+      color: #666;
+      background: white;
       font-size: 10px;
     }
     
