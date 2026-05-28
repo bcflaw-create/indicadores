@@ -1,6 +1,0 @@
-indicadores/
-├── api/
-│   └── indicadores.js
-├── vercel.json
-├── package.json
-└── README.md
