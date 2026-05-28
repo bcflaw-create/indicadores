@@ -2,29 +2,28 @@ export default async function handler(req, res) {
   try {
     const apiKey = '22949e4aa0144fb9a2959bfb71937eec';
     
-    // Obtener noticias de Reuters, Bloomberg, AP sobre regulación mexicana y corporate law
+    // Búsqueda más simple y genérica
     const newsResponse = await fetch(
-      `https://newsapi.org/v2/everything?q=(Mexico OR Mexican) AND (law OR regulation OR corporate OR compliance OR fiscal OR tax)&sources=reuters,bloomberg&sortBy=publishedAt&language=en&pageSize=10&apiKey=${apiKey}`
+      `https://newsapi.org/v2/everything?q=Mexico law&sortBy=publishedAt&language=en&pageSize=10&apiKey=${apiKey}`
     );
     
     const newsData = await newsResponse.json();
     let noticias = [];
     
     if (newsData.articles && newsData.articles.length > 0) {
-      // Filtrar duplicados y tomar solo los primeros 5
       noticias = newsData.articles
         .slice(0, 5)
         .map(article => ({
           titulo: article.title,
-          descripcion: article.description || article.content || 'Última información sobre regulaciones y normativas',
+          descripcion: article.description || 'Última información sobre regulaciones y normativas',
           url: article.url,
           fecha: article.publishedAt,
           fuente: article.source.name
         }));
     }
     
-    // Si no hay suficientes noticias, agregar placeholder
-    if (noticias.length < 5) {
+    // Si no hay noticias, agregar del DOF
+    if (noticias.length < 3) {
       noticias.push({
         titulo: 'Últimas Disposiciones Fiscales',
         descripcion: 'Consulta las disposiciones más recientes en el Diario Oficial de la Federación',
@@ -45,26 +44,25 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
     
-    // Fallback solo si falla NewsAPI
     return res.json({
       noticias: [
         {
-          titulo: 'Regulación Corporativa Mexicana',
-          descripcion: 'Últimas noticias sobre cambios normativos en México',
+          titulo: 'Regulación Corporativa en México',
+          descripcion: 'Últimas noticias sobre cambios normativos',
           fecha: new Date().toISOString(),
-          fuente: 'Reuters',
+          fuente: 'Noticias',
           url: '#'
         },
         {
-          titulo: 'Cambios en Normativa Fiscal',
-          descripcion: 'Información sobre reformas fiscales en curso',
+          titulo: 'Reforma Fiscal Mexicana',
+          descripcion: 'Información sobre cambios en normativa fiscal',
           fecha: new Date().toISOString(),
-          fuente: 'Bloomberg',
+          fuente: 'Noticias',
           url: '#'
         },
         {
-          titulo: 'Disposiciones Legales',
-          descripcion: 'Consulta el Diario Oficial para más información',
+          titulo: 'Cumplimiento Corporativo',
+          descripcion: 'Disposiciones legales vigentes',
           fecha: new Date().toISOString(),
           fuente: 'DOF',
           url: 'https://www.dof.gob.mx'
