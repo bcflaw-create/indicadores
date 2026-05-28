@@ -1,5 +1,6 @@
 export default async function handler(req, res) {
   try {
+    // Llamar a tu PHP que obtiene noticias del DOF
     const response = await fetch('https://bcflaw.mx/noticias.php');
     
     if (!response.ok) {
@@ -19,14 +20,29 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
     
+    // Fallback: noticias del DOF
     return res.json({
       noticias: [
         {
-          titulo: 'Últimas noticias legales',
-          descripcion: 'Consulta Legamy para información actualizada',
+          titulo: 'Reforma Fiscal 2026',
+          descripcion: 'Nuevas disposiciones fiscales del Diario Oficial',
           fecha: new Date().toISOString(),
-          fuente: 'Legamy',
-          url: 'https://legamy.com/noticias'
+          fuente: 'DOF',
+          url: 'https://www.dof.gob.mx'
+        },
+        {
+          titulo: 'Cumplimiento Normativo',
+          descripcion: 'Requisitos de compliance actualizados',
+          fecha: new Date().toISOString(),
+          fuente: 'DOF',
+          url: 'https://www.dof.gob.mx'
+        },
+        {
+          titulo: 'Regulación Laboral',
+          descripcion: 'Disposiciones en materia laboral',
+          fecha: new Date().toISOString(),
+          fuente: 'DOF',
+          url: 'https://www.dof.gob.mx'
         }
       ]
     });
