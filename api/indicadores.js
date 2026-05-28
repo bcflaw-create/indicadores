@@ -34,7 +34,6 @@ export default async function handler(req, res) {
     res.status(500).json({ 
       exito: false,
       error: error.message,
-      timestamp: new ISOString()
-    });
+timestamp: new Date().toISOString()    });
   }
 }
