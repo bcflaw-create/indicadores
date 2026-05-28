@@ -1,35 +1,67 @@
 export default async function handler(req, res) {
   try {
-    const apiKey = '22949e4aa0144fb9a2959bfb71937eec';
+    // Obtener noticias de Legamy
+    const legamyResponse = await fetch('https://legamy.com/noticias', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
     
-    // Búsqueda específica para noticias mexicanas de regulación
-    const newsResponse = await fetch(
-      `https://newsapi.org/v2/everything?q="Mexico" OR "Mexican" OR "CDMX" OR "Banxico" OR "SAT" OR "INAI" OR "reforma fiscal" OR "regulación mexicana"&sortBy=publishedAt&language=en&pageSize=20&apiKey=${apiKey}`
-    );
+    const html = await legamyResponse.text();
     
-    const newsData = await newsResponse.json();
-    let noticias = [];
+    // Extraer noticias del HTML
+    const noticias = [];
     
-    if (newsData.articles && newsData.articles.length > 0) {
-      // Filtrar para asegurar que son de México
-      noticias = newsData.articles
-        .filter(article => 
-          article.title.toLowerCase().includes('mexico') || 
-          article.title.toLowerCase().includes('mexican') ||
-          article.description?.toLowerCase().includes('mexico') ||
-          article.description?.toLowerCase().includes('mexican')
-        )
-        .slice(0, 5)
-        .map(article => ({
-          titulo: article.title,
-          descripcion: article.description || 'Información sobre regulaciones y normativas en México',
-          url: article.url,
-          fecha: article.publishedAt,
-          fuente: article.source.name
-        }));
+    // Patrón para extraer títulos y fechas
+    const regex = /<h2[^>]*>([^<]+)<\/h2>|<div[^>]*class="[^"]*fecha[^"]*"[^>]*>([^<]+)<\/div>/gi;
+    const matches = html.matchAll(regex);
+    
+    let newsArray = [];
+    let i = 0;
+    
+    // Buscar elementos con estructura de noticia
+    const newsPattern = /<article[^>]*>|<div[^>]*class="[^"]*noticia[^"]*"[^>]*>(.*?)<\/div>/gis;
+    const newsMatches = Array.from(html.matchAll(newsPattern));
+    
+    // Método alternativo: extraer por párrafos y encabezados
+    const lines = html.split('\n');
+    let currentNews = {};
+    
+    for (let j = 0; j < Math.min(lines.length, 500) && noticias.length < 5; j++) {
+      const line = lines[j];
+      
+      // Buscar títulos
+      if (line.includes('<h2') || line.includes('<h3')) {
+        const titleMatch = line.match(/>([^<]{20,150})</);
+        if (titleMatch && titleMatch[1].length > 10) {
+          currentNews.titulo = titleMatch[1].trim();
+        }
+      }
+      
+      // Buscar fechas
+      if (line.includes('mayo') || line.includes('May') || /\d{1,2}\s*(de|of)\s*(mayo|May)/.test(line)) {
+        const dateMatch = line.match(/(\d{1,2}\s*(de\s+)?mayo.*?\d{4}|\d{1,2}.*?May.*?\d{4})/i);
+        if (dateMatch) {
+          currentNews.fecha = dateMatch[0].trim();
+        }
+      }
+      
+      // Si tenemos título y fecha, agregar a noticias
+      if (currentNews.titulo && currentNews.fecha && noticias.length < 5) {
+        if (!noticias.some(n => n.titulo === currentNews.titulo)) {
+          noticias.push({
+            titulo: currentNews.titulo,
+            descripcion: 'Última información sobre regulaciones mexicanas',
+            url: 'https://legamy.com/noticias',
+            fecha: new Date().toISOString(),
+            fuente: 'Legamy'
+          });
+          currentNews = {};
+        }
+      }
     }
     
-    // Si no hay suficientes noticias, agregar referencia al DOF
+    // Si no encontramos suficientes, agregar fallback del DOF
     if (noticias.length < 5) {
       noticias.push({
         titulo: 'Últimas Disposiciones Fiscales',
@@ -43,7 +75,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
     
-    return res.json({ noticias });
+    return res.json({ noticias: noticias.slice(0, 5) });
     
   } catch (error) {
     console.error('Error:', error.message);
@@ -51,25 +83,19 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
     
+    // Fallback
     return res.json({
       noticias: [
         {
           titulo: 'Regulación Corporativa en México',
           descripcion: 'Últimas noticias sobre cambios normativos mexicanos',
           fecha: new Date().toISOString(),
-          fuente: 'Noticias Legales',
-          url: 'https://www.dof.gob.mx'
+          fuente: 'Legamy',
+          url: 'https://legamy.com/noticias'
         },
         {
           titulo: 'Reforma Fiscal Mexicana',
-          descripcion: 'Información sobre cambios en normativa fiscal en México',
-          fecha: new Date().toISOString(),
-          fuente: 'Noticias Legales',
-          url: 'https://www.dof.gob.mx'
-        },
-        {
-          titulo: 'Cumplimiento Corporativo en México',
-          descripcion: 'Disposiciones legales vigentes para empresas mexicanas',
+          descripcion: 'Información sobre cambios en normativa fiscal',
           fecha: new Date().toISOString(),
           fuente: 'DOF',
           url: 'https://www.dof.gob.mx'
